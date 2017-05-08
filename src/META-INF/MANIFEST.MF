@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: Msc.jar json-jena-1.0.jar
+Main-Class: com.voice.view.Main
+
