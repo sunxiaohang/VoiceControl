@@ -8,6 +8,8 @@ import com.iflytek.cloud.speech.SpeechRecognizer;
 import com.voice.util.HttpRequest;
 import com.voice.util.JsonParser;
 import com.voice.util.ProcessImage;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,15 +21,16 @@ public class SpeechToText {
     private HttpRequest request;
     private String controlCode;
     private ProcessImage processImage;
-    private static SpeechToText speechToText=new SpeechToText();
+    private static SpeechToText speechToText = new SpeechToText();
 
-    public static SpeechToText getInstance(){
-        if(speechToText!=null)return speechToText;
+    public static SpeechToText getInstance() {
+        if (speechToText != null) return speechToText;
         else return new SpeechToText();
     }
+
     private SpeechToText() {
         request = new HttpRequest();
-        processImage=new ProcessImage();
+        processImage = new ProcessImage();
         //1.创建语音对象
         mIat = SpeechRecognizer.createRecognizer();
         mIat.setParameter(SpeechConstant.DOMAIN, "iat");
@@ -43,6 +46,7 @@ public class SpeechToText {
     private RecognizerListener mRecoListener = new RecognizerListener() {
         public void onResult(RecognizerResult results, boolean isLast) {
             String text = results.getResultString();
+            System.out.println(text);
             if (text == null || text == "") {
                 System.out.print("请输入语音");
             } else {
@@ -86,12 +90,12 @@ public class SpeechToText {
                     }
                 } else {
                     if (isInto) {
-                        TextToSpeech textToSpeech =TextToSpeech.getInstance();
-                        String temp = request.request(result);
+//                        TextToSpeech textToSpeech =TextToSpeech.getInstance();
                         localProcess(result);
-                        if (temp != null) {
-                            textToSpeech.translate(temp);
-                        }
+//                        String temp = request.request(result);
+//                        if (temp != null) {
+//                            textToSpeech.translate(temp);
+//                        }
                         isInto = false;
                     }
                 }
@@ -105,17 +109,21 @@ public class SpeechToText {
                 System.out.print("onError Code：" + error.getErrorCode());
             }
         }
+
         //开始录音
         public void onBeginOfSpeech() {
             System.out.print("开始录音：");
         }  //音量值0~30
+
         public void onVolumeChanged(int volume) {
 
         }
+
         //结束录音
         public void onEndOfSpeech() {
 
         }
+
         //扩展用接口
         public void onEvent(int eventType, int arg1, int arg2, String msg) {
 
@@ -123,36 +131,38 @@ public class SpeechToText {
     };
 
     private void localProcess(String result) {
-        if(result.contains("朋友")){
+        System.out.println("执行到了");
+        System.out.println(result);
+        if (result.contains("朋友")) {
             TextToSpeech.getInstance().translate("那当然很开心呢，我叫小西，你叫什么名字呢");
-        }else if(result.contains("名字")){
-            String imagePath=processImage.scropImage();
-            if(FaceDetect.geInstance().isFace(imagePath))
-                FaceNames.getInstance().addPeople(imagePath,result.substring(result.indexOf("叫")));
+        } else if (result.contains("名字")) {
+            String imagePath = processImage.scropImage();
+            if (FaceDetect.geInstance().isFace(imagePath))
+                FaceNames.getInstance().addPeople(imagePath, result.substring(result.indexOf("叫")));
             else TextToSpeech.getInstance().translate("换个角度试试，我看不清楚嘛");
-        }else if(result.contains("认识我")){
-            String conformImage=processImage.scropImage();
+        } else if (result.contains("认识我")) {
+            String conformImage = processImage.scropImage();
             TextToSpeech.getInstance().translate("让我想想");
             conformFace(conformImage);
         }
     }
 
     public void conformFace(String imagePath) {
-        File file=new File("./picture");
-        String name="";
-        FaceNames.getInstance().addPeople("./picture/test.png","杨红竟");
-        FaceNames.getInstance().addPeople("./picture/confuse.png","杨红竟");
-        if(file.exists()){
-            File files[]=file.listFiles();
-            for (File f:files){
-                if(FaceDetect.geInstance().detectFace(imagePath,f.getPath())) {
+        File file = new File("/home/pi/VoiceControl/picture/");
+        String name = "";
+        if (file.exists()) {
+            File files[] = file.listFiles();
+            for (File f : files) {
+                if (FaceDetect.geInstance().detectFace(imagePath, f.getPath())) {
+                    System.out.println(f.getPath());
+                    System.out.println(f.getName());
                     name = FaceNames.getInstance().getPeopleName(f.getPath());
-                    System.out.println("名字"+name);
-                    TextToSpeech.getInstance().translate(TalkMessages.SUCCESS+name);
-                    break;
+                    System.out.println("名字" + name);
+                    TextToSpeech.getInstance().translate(TalkMessages.SUCCESS + name);
+                    return;
                 }
-                else TextToSpeech.getInstance().translate("我还不认识你呢");
             }
+            TextToSpeech.getInstance().translate("我还不认识你呢");
         }
     }
 
@@ -196,6 +206,7 @@ public class SpeechToText {
         String[] sendCode2 = {"/bin/bash", "-c", controlCode};
         Runtime.getRuntime().exec(sendCode2);
     }
+
     private void moveForward() throws IOException {
         System.out.println("前进");
         controlCode = "echo -n " + "a" + " >/dev/ttyUSB0";

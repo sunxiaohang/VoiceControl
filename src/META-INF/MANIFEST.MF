@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: Msc.jar json-jena-1.0.jar
+Class-Path: json-jena-1.0.jar Msc.jar json-20160810.jar face_sdk-1.3.4
+ .jar VoiceControl.jar Msc.jar json-jena-1.0.jar
 Main-Class: com.voice.view.Main
 

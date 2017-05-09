@@ -7,7 +7,7 @@ import java.io.*;
  */
 public class ProcessImage {
     private ProcessBuilder builder;
-    private final String pathHead = "./picture/people";
+    private final String pathHead = "/home/pi/VoiceControl/picture/people";
     private final String pathTail = ".jpg";
     private int index = 0;
 
@@ -23,20 +23,26 @@ public class ProcessImage {
     public String scropImage() {
         String imagePath = getPath();
         while(new File(imagePath).exists())imagePath = getPath();
-        builder.command("ffmpeg", "-i", "http://localhost:8080/?action=stream", "-f", "image2", "-ss",
-                "0", "-vframes", "1",imagePath);
-        builder.redirectErrorStream(false);
+//        builder.command("/bin/bash", "-c","ffmpeg", "-i", "http://localhost:8080/?action=stream", "-f", "image2", "-ss",
+//                "0", "-vframes", "1",imagePath);
+//        builder.redirectErrorStream(false);
+//        try {
+//            Process process = builder.start();
+//            InputStream in = process.getInputStream();
+//            System.out.println("正在截图，请稍候，");
+//            convertStreamToString(in);
+//            InputStream errorStream=process.getErrorStream();
+//            if(errorStream!=null&&errorStream.read()>0){
+//                System.out.println("错误:");
+//                convertStreamToString(errorStream);
+//            }
+//            in.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        String[] scropImageOrder = {"/bin/bash", "-c", "ffmpeg -i \"http://localhost:8080/?action=stream\" -f image2 -ss 0 -vframes 1 "+imagePath};
         try {
-            Process process = builder.start();
-            InputStream in = process.getInputStream();
-            System.out.println("正在截图，请稍候，");
-            convertStreamToString(in);
-            InputStream errorStream=process.getErrorStream();
-            if(errorStream!=null&&errorStream.read()>0){
-                System.out.println("错误:");
-                convertStreamToString(errorStream);
-            }
-            in.close();
+            Process process = Runtime.getRuntime().exec(scropImageOrder);
         } catch (IOException e) {
             e.printStackTrace();
         }
