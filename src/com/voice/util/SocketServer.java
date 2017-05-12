@@ -27,8 +27,7 @@ public class SocketServer extends Thread {
                 if (str == null) break;
                 System.out.println(str);
                 if (str.equals("110")) {
-                    String[] loadvideo = {"/bin/bash", "-c", "/home/pi/VideoStream.sh  >/dev/null 2>&1 &"};
-                    java.lang.Process process = Runtime.getRuntime().exec(loadvideo);
+                    startStream();
                 } else if (str.equals("119")) {
                     String[] command1 = {"/bin/bash", "-c", "killall -9 mjpg_streamer"};
                     String[] command2 = {"/bin/bash", "-c", "killall -9 video.sh"};
@@ -47,6 +46,16 @@ public class SocketServer extends Thread {
         } finally {
         }
     }
+
+    private void startStream() {
+        String[] loadvideo = {"/bin/bash", "-c", "/home/pi/VoiceControl/VideoStream.sh  >/dev/null 2>&1 &"};
+        try {
+            Process process = Runtime.getRuntime().exec(loadvideo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void startServer() throws IOException {
         ServerSocket server = new ServerSocket(6789);
         while (true) {

@@ -2,8 +2,8 @@
   <library name="VoiceControl_jar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/out/artifacts/VoiceControl_jar/Msc.jar!/" />
-      <root url="jar://$PROJECT_DIR$/out/artifacts/VoiceControl_jar/json-jena-1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/VoiceControl_jar/VoiceControl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/VoiceControl_jar/json-jena-1.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
