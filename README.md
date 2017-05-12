@@ -1,7 +1,9 @@
-## IntelligentCar (VoiceControl.jar)
+## IntelligentCar
+
+**IntelligentCar (VoiceControl.jar)**
 语音控制小车的树莓派端，主要功能包括语音识别，语音聊天，人脸身份识别以及socket通信服务器
 
-#####库文件
+##### 库文件
 - face_sdk-1.3.4.jar
 - json-20160810.jar
 - json-jean-1.0.jar
